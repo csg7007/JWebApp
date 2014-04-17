@@ -54,6 +54,7 @@ public class HGroup {
 
 	public HGroup(Container compParent) {
 		_compParent = compParent;
+		_compParent.setLayout(null);
 	}
 
 	public void add(Component comp) {
@@ -84,25 +85,16 @@ public class HGroup {
 	 */
 	private void hvLayout(Component comp) {
 		int x = 0;
-		int y = 0;
-		// 首先设置水平坐标值
 		switch (horizontalAlign) {
 		case HORIZONTAL_LEFT:
-			x = HORIZONTAL_GAP + lastComponet.getX() + lastComponet.getWidth();
+			x = hGap + lastComponet.getX() + lastComponet.getWidth();
 			break;
 		case HORIZONTAL_RIGHT:
-			y = lastComponet.getX() - HORIZONTAL_GAP - comp.getWidth();
+			x = lastComponet.getX() - hGap - comp.getWidth();
 			break;
 		}
-		switch (verticalAlign) {
-		case VERTICAL_TOP:
-			y = lastComponet.getY() + lastComponet.getHeight() + VERTICAL_GAP;
-			break;
-		case VERTICAL_BOTTOM:
-			y = lastComponet.getY() - VERTICAL_GAP - comp.getHeight();
-			break;
-		}
-		comp.setLocation(x, y);
+		comp.setBounds(x, comp.getY(),comp.getWidth(),comp.getHeight());
+		lastComponet=comp;
 		_compParent.add(comp);
 		_compParent.validate();
 	}
@@ -127,7 +119,7 @@ public class HGroup {
 		for (Component comp : listSonComp) {
 			compTotalWidth += comp.getWidth();
 		}
-		compTotalWidth += (listSonComp.size() - 1) * HORIZONTAL_GAP;
+		compTotalWidth += (listSonComp.size() - 1) * hGap;
 		if (compTotalWidth < _compParent.getWidth()) {
 			hParentGap = (_compParent.getWidth() - compTotalWidth) / 2;
 		}
@@ -153,21 +145,12 @@ public class HGroup {
 	private void initLastComponent(Component comp) {
 		lastComponet = comp;
 		int x = lastComponet.getX();
-		int y = lastComponet.getY();
-		// 设置水平值
 		if (horizontalAlign == HORIZONTAL_LEFT) {
 			x = hParentGap;
 		} else if (horizontalAlign == HORIZONTAL_RIGHT) {
 			x = _compParent.getWidth() - lastComponet.getWidth() - hParentGap;
 		}
-
-		// 设置垂直值
-		if (verticalAlign == VERTICAL_TOP) {
-			y = vParentGap;
-		} else if (verticalAlign == VERTICAL_BOTTOM) {
-			y = _compParent.getHeight() - vParentGap - lastComponet.getHeight();
-		}
-		lastComponet.setLocation(x, y);
+		lastComponet.setBounds(x, lastComponet.getY(),lastComponet.getWidth(),lastComponet.getHeight());
 		_compParent.add(lastComponet);
 		_compParent.validate();
 	}
