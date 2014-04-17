@@ -1,6 +1,7 @@
 package layout;
-
 import java.awt.Component;
+import java.awt.Container;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -11,7 +12,7 @@ import java.util.List;
  */
 public class HGroup {
 	/** 容器组件 */
-	private Component _compParent;
+	private Container _compParent;
 	/** 子组件数组 */
 	private List<Component> listSonComp;
 	/** 最后一个子组件 */
@@ -51,30 +52,29 @@ public class HGroup {
 	/** 水平对齐方式：自右向左 */
 	public static final int HORIZONTAL_RIGHT = 1;
 
-	public HGroup(Component compParent) {
+	public HGroup(Container compParent) {
 		_compParent = compParent;
 	}
 
 	public void add(Component comp) {
 		if (comp != null) {
+			listSonComp = new ArrayList<Component>();
 			listSonComp.add(comp);
-			// 如果是第一次添加
-			if (lastComponet == null) {
-				initLastComponent(comp);
-			} else {
-				// 由于是居中显示，则必须重新设置所有组件的位置
-				if (isHorizontalCenter || isVerticalCenter) {
-					initHVParentGap();
-					// 布局第一个组件
-					initLastComponent(listSonComp.get(0));
-					// 布局其它的组件
-					for (int i = 1; i < listSonComp.size(); i++) {
-						hvLayout(listSonComp.get(i));
-					}
-				} else {
-					// 如果不是居中显示，则直接布局该组件
-					hvLayout(comp);
+			// 由于是居中显示，则必须重新设置所有组件的位置
+			if (isHorizontalCenter || isVerticalCenter) {
+				initHVParentGap();
+				// 布局第一个组件
+				initLastComponent(listSonComp.get(0));
+				// 布局其它的组件
+				for (int i = 1; i < listSonComp.size(); i++) {
+					hvLayout(listSonComp.get(i));
 				}
+			} else {
+				// 如果不是居中显示，则直接布局该组件
+				if (lastComponet == null) {
+					initLastComponent(comp);
+				}
+				hvLayout(comp);
 			}
 		}
 	}
@@ -103,6 +103,8 @@ public class HGroup {
 			break;
 		}
 		comp.setLocation(x, y);
+		_compParent.add(comp);
+		_compParent.validate();
 	}
 
 	private void initHVParentGap() {
@@ -166,6 +168,8 @@ public class HGroup {
 			y = _compParent.getHeight() - vParentGap - lastComponet.getHeight();
 		}
 		lastComponet.setLocation(x, y);
+		_compParent.add(lastComponet);
+		_compParent.validate();
 	}
 
 	public int getVerticalAlign() {
